@@ -2,6 +2,7 @@ let port;
 let writer;
 let contadorEncendidos = 0;
 let blinkActivo = false;
+let controlesConectados = false;
 const niveles = { 1: 128, 2: 128, 3: 128 };
 const ultimosNiveles = { 1: 128, 2: 128, 3: 128 };
 
@@ -32,8 +33,11 @@ async function connectArduino() {
         btnConnect.textContent = 'Conectado';
         btnConnect.disabled = true;
         document.querySelectorAll('[data-cmd]').forEach(button => button.disabled = false);
-        [...sliders, sliderMaster, sliderBlink].forEach(slider => slider.disabled = false);
-        bindControls();
+        [...sliders, sliderMaster, sliderBlink, btnBlink].forEach(control => control.disabled = false);
+        if (!controlesConectados) {
+            bindControls();
+            controlesConectados = true;
+        }
         leerRespuestasArduino();
     } catch (error) {
         console.error('Error de conexión:', error);
@@ -55,7 +59,7 @@ function updateSliderValue(id, value) {
     sliders[id - 1].value = value;
 }
 
-function setLevel(id, value, send = true) {
+function setLevel(id, value) {
     const newValue = Number(value);
     if (newValue > 0 && niveles[id] === 0) {
         contadorEncendidos++;
@@ -64,7 +68,7 @@ function setLevel(id, value, send = true) {
     if (newValue > 0) ultimosNiveles[id] = newValue;
     niveles[id] = newValue;
     updateSliderValue(id, newValue);
-    if (send) enviarComando(`LED${id}:${newValue}`);
+    return enviarComando(`LED${id}:${newValue}`);
 }
 
 function bindControls() {
@@ -87,14 +91,13 @@ function bindControls() {
             const command = button.dataset.cmd;
             if (/^ON[123]$/.test(command)) {
                 const id = Number(command.slice(-1));
-                setLevel(id, ultimosNiveles[id] || 128);
+                await setLevel(id, ultimosNiveles[id] || 128);
             } else if (/^OFF[123]$/.test(command)) {
-                const id = Number(command.slice(-1));
-                setLevel(id, 0);
+                await setLevel(Number(command.slice(-1)), 0);
             } else if (command === 'ALLON') {
-                [1, 2, 3].forEach(id => setLevel(id, ultimosNiveles[id] || 128));
+                for (const id of [1, 2, 3]) await setLevel(id, ultimosNiveles[id] || 128);
             } else if (command === 'ALLOFF') {
-                [1, 2, 3].forEach(id => setLevel(id, 0));
+                for (const id of [1, 2, 3]) await setLevel(id, 0);
             }
         });
     });
