@@ -50,6 +50,11 @@ function updateCounter() {
     contadorEl.textContent = contadorEncendidos;
 }
 
+function updateSliderValue(id, value) {
+    document.getElementById(`valorLED${id}`).textContent = value;
+    sliders[id - 1].value = value;
+}
+
 function setLevel(id, value, send = true) {
     const newValue = Number(value);
     if (newValue > 0 && niveles[id] === 0) {
@@ -58,8 +63,7 @@ function setLevel(id, value, send = true) {
     }
     if (newValue > 0) ultimosNiveles[id] = newValue;
     niveles[id] = newValue;
-    sliders[id - 1].value = newValue;
-    document.getElementById(`valorLED${id}`).textContent = newValue;
+    updateSliderValue(id, newValue);
     if (send) enviarComando(`LED${id}:${newValue}`);
 }
 
@@ -82,9 +86,11 @@ function bindControls() {
         button.addEventListener('click', async () => {
             const command = button.dataset.cmd;
             if (/^ON[123]$/.test(command)) {
-                setLevel(Number(command.slice(-1)), ultimosNiveles[Number(command.slice(-1))]);
+                const id = Number(command.slice(-1));
+                setLevel(id, ultimosNiveles[id] || 128);
             } else if (/^OFF[123]$/.test(command)) {
-                setLevel(Number(command.slice(-1)), 0);
+                const id = Number(command.slice(-1));
+                setLevel(id, 0);
             } else if (command === 'ALLON') {
                 [1, 2, 3].forEach(id => setLevel(id, ultimosNiveles[id] || 128));
             } else if (command === 'ALLOFF') {

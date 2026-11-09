@@ -21,7 +21,7 @@
         <section class="controles">
             <h2>Control individual</h2>
             <div class="led-control led1">
-                <h3>LED 1 (Pin 9)</h3>
+                <h3>LED rojo (Pin 8)</h3>
                 <button class="btn btn-on" data-cmd="ON1" disabled>ENCENDER</button>
                 <button class="btn btn-off" data-cmd="OFF1" disabled>APAGAR</button>
                 <div class="slider-container">
@@ -29,10 +29,11 @@
                     <input type="range" id="sliderLED1" min="0" max="255" value="128" disabled>
                     <output id="valorLED1">128</output>
                 </div>
+                <small>El pin 8 no admite PWM; el slider controla encendido/apagado.</small>
             </div>
 
             <div class="led-control led2">
-                <h3>LED 2 (Pin 10)</h3>
+                <h3>LED azul (Pin 9)</h3>
                 <button class="btn btn-on" data-cmd="ON2" disabled>ENCENDER</button>
                 <button class="btn btn-off" data-cmd="OFF2" disabled>APAGAR</button>
                 <div class="slider-container">
@@ -43,7 +44,7 @@
             </div>
 
             <div class="led-control led3">
-                <h3>LED 3 (Pin 11)</h3>
+                <h3>LED verde (Pin 10)</h3>
                 <button class="btn btn-on" data-cmd="ON3" disabled>ENCENDER</button>
                 <button class="btn btn-off" data-cmd="OFF3" disabled>APAGAR</button>
                 <div class="slider-container">

@@ -1,14 +1,14 @@
 /*
  * Control de tres LEDs desde una página web mediante Web Serial API.
- * Para usar el control de brillo individual, conecta los LEDs a pines PWM.
- * En Arduino UNO se usan los pines 9, 10 y 11.
+ * Conexiones correctas: LED rojo en pin 8, LED azul en pin 9, LED verde en pin 10.
+ * Los pines 9 y 10 admiten PWM. El pin 8 es digital y solo actúa como ON/OFF.
  * Comandos: LED1:valor, LED2:valor, LED3:valor, MASTER:valor,
  * BLINK:0/1 y SPEED:milisegundos.
  */
-const int LED1 = 9;
-const int LED2 = 10;
-const int LED3 = 11;
-const int pinesLED[] = {LED1, LED2, LED3};
+const int LED_ROJO = 8;
+const int LED_AZUL = 9;
+const int LED_VERDE = 10;
+const int pinesLED[] = {LED_ROJO, LED_AZUL, LED_VERDE};
 int nivelesLED[] = {128, 128, 128};
 int brilloGeneral = 255;
 bool parpadeoActivo = false;
@@ -21,14 +21,19 @@ void aplicarBrillo() {
   for (int i = 0; i < 3; i++) {
     int salida = (parpadeoActivo && !estadoParpadeo) ? 0 : nivelesLED[i];
     salida = (salida * brilloGeneral) / 255;
-    analogWrite(pinesLED[i], salida);
+
+    if (i == 0) {
+      digitalWrite(pinesLED[i], salida > 0 ? HIGH : LOW);
+    } else {
+      analogWrite(pinesLED[i], salida);
+    }
   }
 }
 
 void setup() {
   for (int i = 0; i < 3; i++) {
     pinMode(pinesLED[i], OUTPUT);
-    analogWrite(pinesLED[i], 0);
+    digitalWrite(pinesLED[i], LOW);
   }
   Serial.begin(9600);
   Serial.println("ARDUINO_LISTO");
@@ -59,6 +64,12 @@ void loop() {
       tiempoAnterior = millis();
     } else if (comando.startsWith("SPEED:")) {
       intervaloParpadeo = constrain(comando.substring(6).toInt(), 100, 1500);
+    } else if (comando == "ON1" || comando == "ON2" || comando == "ON3") {
+      int indice = comando.charAt(2) - '1';
+      nivelesLED[indice] = 128;
+    } else if (comando == "OFF1" || comando == "OFF2" || comando == "OFF3") {
+      int indice = comando.charAt(3) - '1';
+      nivelesLED[indice] = 0;
     }
 
     aplicarBrillo();
