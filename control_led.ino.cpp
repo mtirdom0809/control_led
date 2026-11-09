@@ -1,9 +1,9 @@
 /*
  * Control de tres LEDs desde una página web mediante Web Serial API.
- * Los tres pines deben admitir PWM para que funcionen todos los sliders.
- * En Arduino UNO: conecta los LEDs a los pines PWM 9, 10 y 11.
+ * Para usar el control de brillo individual, conecta los LEDs a pines PWM.
+ * En Arduino UNO se usan los pines 9, 10 y 11.
  * Comandos: LED1:valor, LED2:valor, LED3:valor, MASTER:valor,
- * ALLON, ALLOFF, BLINK:0/1 y SPEED:milisegundos.
+ * BLINK:0/1 y SPEED:milisegundos.
  */
 const int LED1 = 9;
 const int LED2 = 10;

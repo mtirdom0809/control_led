@@ -3,86 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f4effa">
-    <title>Control de luces | Arduino</title>
+    <title>Control LEDs Arduino</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-    <main class="container">
-        <header class="hero">
-            <p class="eyebrow">UN RINCÓN DE LUZ</p>
-            <h1>Control de luces</h1>
-            <p class="subtitle">Ajusta el brillo y crea una atmósfera tranquila.</p>
+    <div class="container">
+        <header>
+            <h1>Control de LEDs</h1>
+            <p class="subtitle">Comunicación Web y Arduino por USB</p>
         </header>
 
-        <section class="connection-card" aria-label="Conexión con Arduino">
-            <div>
-                <h2>Tu placa</h2>
-                <p id="status" class="status-msg" aria-live="polite">Desconectado</p>
-            </div>
+        <section class="conexion">
             <button id="btnConnect" class="btn btn-connect">Conectar Arduino</button>
+            <p id="status" class="status-msg" aria-live="polite">Desconectado</p>
         </section>
 
-        <section class="controls-section">
-            <div class="section-heading">
-                <p class="eyebrow">ILUMINACIÓN</p>
-                <h2>Luces individuales</h2>
+        <section class="controles">
+            <h2>Control individual</h2>
+            <div class="led-control led1">
+                <h3>LED 1 (Pin 9)</h3>
+                <button class="btn btn-on" data-cmd="ON1" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF1" disabled>APAGAR</button>
+                <div class="slider-container">
+                    <label for="sliderLED1">Luminosidad:</label>
+                    <input type="range" id="sliderLED1" min="0" max="255" value="128" disabled>
+                    <output id="valorLED1">128</output>
+                </div>
             </div>
-            <div class="led-grid">
-                <article class="led-card led1">
-                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz uno</h3></div>
-                    <label for="sliderLED1">Brillo <output id="valorLED1">128</output></label>
-                    <input class="range-input" type="range" id="sliderLED1" min="0" max="255" value="128" disabled>
-                </article>
-                <article class="led-card led2">
-                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz dos</h3></div>
-                    <label for="sliderLED2">Brillo <output id="valorLED2">128</output></label>
-                    <input class="range-input" type="range" id="sliderLED2" min="0" max="255" value="128" disabled>
-                </article>
-                <article class="led-card led3">
-                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz tres</h3></div>
-                    <label for="sliderLED3">Brillo <output id="valorLED3">128</output></label>
-                    <input class="range-input" type="range" id="sliderLED3" min="0" max="255" value="128" disabled>
-                </article>
+
+            <div class="led-control led2">
+                <h3>LED 2 (Pin 10)</h3>
+                <button class="btn btn-on" data-cmd="ON2" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF2" disabled>APAGAR</button>
+                <div class="slider-container">
+                    <label for="sliderLED2">Luminosidad:</label>
+                    <input type="range" id="sliderLED2" min="0" max="255" value="128" disabled>
+                    <output id="valorLED2">128</output>
+                </div>
+            </div>
+
+            <div class="led-control led3">
+                <h3>LED 3 (Pin 11)</h3>
+                <button class="btn btn-on" data-cmd="ON3" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF3" disabled>APAGAR</button>
+                <div class="slider-container">
+                    <label for="sliderLED3">Luminosidad:</label>
+                    <input type="range" id="sliderLED3" min="0" max="255" value="128" disabled>
+                    <output id="valorLED3">128</output>
+                </div>
             </div>
         </section>
 
-        <section class="master-card">
-            <div class="section-heading">
-                <p class="eyebrow">AMBIENTE</p>
-                <h2>Brillo general</h2>
-                <p class="helper-text">Ajusta todas las luces a la vez sin cambiar sus niveles individuales.</p>
+        <section class="controles-especiales">
+            <h2>Controles especiales</h2>
+            <button class="btn btn-all-on" data-cmd="ALLON" disabled>ENCENDER TODOS</button>
+            <button class="btn btn-all-off" data-cmd="ALLOFF" disabled>APAGAR TODOS</button>
+
+            <div class="slider-container master-slider">
+                <label for="sliderMaster">Luminosidad general:</label>
+                <input type="range" id="sliderMaster" min="0" max="255" value="255" disabled>
+                <output id="valorMaster">255</output>
             </div>
-            <label for="sliderMaster">Intensidad general <output id="valorMaster">255</output></label>
-            <input class="range-input" type="range" id="sliderMaster" min="0" max="255" value="255" disabled>
-            <div class="button-row">
-                <button class="btn btn-soft" data-cmd="ALLON" disabled>Encender todas</button>
-                <button class="btn btn-outline" data-cmd="ALLOFF" disabled>Apagar todas</button>
+
+            <div class="blink-control">
+                <button id="btnBlink" class="btn btn-blink" disabled>ACTIVAR PARPADEO</button>
+                <div class="slider-container">
+                    <label for="sliderBlink">Velocidad del parpadeo:</label>
+                    <input type="range" id="sliderBlink" min="100" max="1500" step="50" value="500" disabled>
+                    <output id="valorBlink">500 ms</output>
+                </div>
             </div>
         </section>
 
-        <section class="blink-card">
-            <div class="section-heading">
-                <p class="eyebrow">RITMO SUAVE</p>
-                <h2>Parpadeo de las luces</h2>
-                <p class="helper-text">Haz que las tres luces parpadeen juntas y elige su ritmo.</p>
-            </div>
-            <label for="sliderBlink">Intervalo <output id="valorBlink">500 ms</output></label>
-            <input class="range-input" type="range" id="sliderBlink" min="100" max="1500" step="50" value="500" disabled>
-            <button id="btnBlink" class="btn btn-blink" disabled>Activar parpadeo</button>
-        </section>
-
-        <section class="counter-card" aria-live="polite">
-            <p class="eyebrow">RESUMEN</p>
-            <p>Encendidos registrados <strong id="contador">0</strong></p>
+        <section class="contador">
+            <h2>Estadísticas</h2>
+            <p>Total de encendidos: <span id="contador" class="contador-num">0</span></p>
         </section>
 
         <footer>
             <p>Realizado por: <strong>Mirian Tirado y Daiana Ruiz</strong></p>
-            <p>Noviembre 2026</p>
-            <img class="gif-footer" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzhrcXVpdGF2aXY3YzBpbTJtMTJxOGs4NGE4bGFqNzMwMmQxNngxNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/JIX9t2j0ZTN9S/giphy.gif" alt="Animación de gato infomático" loading="lazy">
+            <p>Fecha: Noviembre 2026</p>
+            <img class="gif-footer" src="https://media.giphy.com/media/EICh6TFvKqVtm/giphy.gif" alt="Animación de un LED parpadeando" loading="lazy">
         </footer>
-    </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
