@@ -1,0 +1,258 @@
+/* ============================================ */
+/* RESET Y ESTILOS BASE                         */
+/* ============================================ */
+
+/* Eliminamos márgenes por defecto y configuramos la fuente */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fondo general de la página con degradado suave */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* ============================================ */
+/* CONTENEDOR PRINCIPAL                         */
+/* ============================================ */
+
+/* Caja blanca centrada que contiene toda la app */
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* ============================================ */
+/* CABECERA                                     */
+/* ============================================ */
+
+/* Título principal centrado */
+header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+header h1 {
+    color: #333;
+    font-size: 2rem;
+}
+
+/* Subtítulo en gris más claro */
+.subtitle {
+    color: #777;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+/* ============================================ */
+/* SECCIÓN DE CONEXIÓN                          */
+/* ============================================ */
+
+.conexion {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* ============================================ */
+/* BOTONES BASE                                 */
+/* ============================================ */
+
+/* Estilo común para todos los botones */
+.btn {
+    padding: 12px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    transition: all 0.2s ease; /* Animación suave al pasar el ratón */
+}
+
+/* Efecto al pasar el ratón por encima */
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Efecto al hacer click */
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Estado deshabilitado (cuando no hay conexión) */
+.btn:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ============================================ */
+/* COLORES ESPECÍFICOS DE BOTONES               */
+/* ============================================ */
+
+.btn-connect { background-color: #007bff; }
+.btn-on      { background-color: #28a745; }
+.btn-off     { background-color: #dc3545; }
+.btn-all-on  { background-color: #ffc107; color: #333; }
+.btn-all-off { background-color: #6c757d; }
+.btn-blink   { background-color: #17a2b8; }
+
+/* ============================================ */
+/* MENSAJE DE ESTADO                            */
+/* ============================================ */
+
+.status-msg {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #666;
+}
+
+/* ============================================ */
+/* SECCIONES DE CONTROLES                       */
+/* ============================================ */
+
+section {
+    margin-bottom: 25px;
+}
+
+section h2 {
+    color: #444;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    border-left: 4px solid #667eea;
+    padding-left: 10px;
+}
+
+/* Cada bloque de control de LED */
+.led-control {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 5px solid #667eea;
+}
+
+.led-control h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Bordes de colores según el LED */
+.led1 { border-left-color: #dc3545; }
+.led2 { border-left-color: #007bff; }
+.led3 { border-left-color: #28a745; }
+
+/* ============================================ */
+/* SLIDER DE PWM                                */
+/* ============================================ */
+
+.slider-container {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.slider-container label {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Estilo del slider (rango) */
+#sliderPWM {
+    flex: 1;
+    min-width: 150px;
+    accent-color: #007bff; /* Color del thumb en navegadores modernos */
+}
+
+/* Número que muestra el valor actual del slider */
+#valorPWM {
+    background: #007bff;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    min-width: 45px;
+    text-align: center;
+}
+
+/* ============================================ */
+/* CONTROLES ESPECIALES                         */
+/* ============================================ */
+
+.controles-especiales {
+    text-align: center;
+}
+
+/* ============================================ */
+/* CONTADOR                                     */
+/* ============================================ */
+
+.contador {
+    text-align: center;
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px dashed #ffc107;
+}
+
+.contador-num {
+    font-size: 1.5rem;
+    color: #d39e00;
+    font-weight: bold;
+}
+
+/* ============================================ */
+/* PIE DE PÁGINA                                */
+/* ============================================ */
+
+footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+/* GIF del pie de página */
+.gif-footer {
+    margin-top: 10px;
+    width: 120px;
+    border-radius: 10px;
+    border: 3px solid #667eea;
+}
+
+/* ============================================ */
+/* RESPONSIVE: ADAPTACIÓN A MÓVILES             */
+/* ============================================ */
+
+@media (max-width: 500px) {
+    header h1 { font-size: 1.5rem; }
+    .btn { width: 100%; margin: 5px 0; }
+}

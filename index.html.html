@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Codificación de caracteres para que se vean bien los acentos y la ñ -->
+    <meta charset="UTF-8">
+    
+    <!-- Hace la página responsive en móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Título que aparece en la pestaña del navegador -->
+    <title>Control LEDs Arduino</title>
+    
+    <!-- Enlace a la hoja de estilos externa -->
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- Contenedor principal de la aplicación -->
+    <div class="container">
+        
+        <!-- Cabecera con el título -->
+        <header>
+            <h1>🔌 Control de LEDs</h1>
+            <p class="subtitle">Comunicación Web ↔ Arduino por USB</p>
+        </header>
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN DE CONEXIÓN CON ARDUINO              -->
+        <!-- ============================================ -->
+        <section class="conexion">
+            <!-- Botón que dispara la Web Serial API -->
+            <button id="btnConnect" class="btn btn-connect">
+                🔗 Conectar Arduino
+            </button>
+            <!-- Mensaje que muestra el estado de la conexión -->
+            <p id="status" class="status-msg">⚪ Desconectado</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN DE CONTROL INDIVIDUAL DE CADA LED    -->
+        <!-- ============================================ -->
+        <section class="controles">
+            <h2>Control individual</h2>
+            
+            <!-- Controles del LED 1 (Rojo) -->
+            <div class="led-control led1">
+                <h3>🔴 LED 1 (Pin 8)</h3>
+                <button class="btn btn-on" data-cmd="ON1" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF1" disabled>APAGAR</button>
+            </div>
+
+            <!-- Controles del LED 2 (Azul) - También tiene PWM -->
+            <div class="led-control led2">
+                <h3>🔵 LED 2 (Pin 9 - PWM)</h3>
+                <button class="btn btn-on" data-cmd="ON2" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF2" disabled>APAGAR</button>
+                
+                <!-- Slider para regular luminosidad (Actividad 7) -->
+                <div class="slider-container">
+                    <label for="sliderPWM">Luminosidad:</label>
+                    <input type="range" id="sliderPWM" min="0" max="255" value="128" disabled>
+                    <span id="valorPWM">128</span>
+                </div>
+            </div>
+
+            <!-- Controles del LED 3 (Verde) -->
+            <div class="led-control led3">
+                <h3>🟢 LED 3 (Pin 10)</h3>
+                <button class="btn btn-on" data-cmd="ON3" disabled>ENCENDER</button>
+                <button class="btn btn-off" data-cmd="OFF3" disabled>APAGAR</button>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN DE CONTROLES ESPECIALES              -->
+        <!-- ============================================ -->
+        <section class="controles-especiales">
+            <h2>Controles especiales</h2>
+            
+            <!-- Botón para encender TODOS los LEDs a la vez (Actividad 4) -->
+            <button class="btn btn-all-on" data-cmd="ALLON" disabled>
+                💡 ENCENDER TODOS
+            </button>
+            <button class="btn btn-all-off" data-cmd="ALLOFF" disabled>
+                🌑 APAGAR TODOS
+            </button>
+            
+            <!-- Botón de parpadeo (Actividad 5) -->
+            <button class="btn btn-blink" data-cmd="BLINK" disabled>
+                ✨ PARPADEO LED 1
+            </button>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- CONTADOR DE ENCENDIDOS (Actividad 6)         -->
+        <!-- ============================================ -->
+        <section class="contador">
+            <h2>📊 Estadísticas</h2>
+            <p>Total de encendidos: <span id="contador" class="contador-num">0</span></p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- PIE DE PÁGINA (Actividad 8)                  -->
+        <!-- ============================================ -->
+        <footer>
+            <p>Realizado por: <strong>[PON AQUÍ TU NOMBRE]</strong></p>
+            <p>Fecha: Noviembre 2026</p>
+            <!-- GIF animado decorativo -->
+            <img src="https://media.giphy.com/media/3o7buirYcmV5nSwIRW/giphy.gif" 
+                 alt="GIF animado" 
+                 class="gif-footer">
+        </footer>
+    </div>
+
+    <!-- Enlace al script JavaScript externo -->
+    <script src="script.js"></script>
+</body>
+</html>
