@@ -1,172 +1,136 @@
-/* ============================================
- * SCRIPT PRINCIPAL - CONTROL LED ARDUINO
- * Usa la Web Serial API para comunicarse con Arduino
- * Compatible con: Chrome y Edge (escritorio)
- * ============================================ */
+/* Comunicación con Arduino mediante Web Serial API. */
+let port;
+let writer;
+let contadorEncendidos = 0;
+let blinkActivo = false;
+const niveles = { 1: 128, 2: 128, 3: 128 };
+const ultimoNivel = { 1: 128, 2: 128, 3: 128 };
 
-// ==========================================
-// VARIABLES GLOBALES
-// ==========================================
-let port;           // Puerto serie conectado
-let writer;         // Escritor para enviar datos a Arduino
-let contadorEncendidos = 0;  // Contador de veces que se ha encendido cualquier LED
-
-// ==========================================
-// REFERENCIAS A ELEMENTOS DEL DOM
-// ==========================================
-const statusEl   = document.getElementById('status');
+const statusEl = document.getElementById('status');
 const btnConnect = document.getElementById('btnConnect');
 const contadorEl = document.getElementById('contador');
-const sliderPWM  = document.getElementById('sliderPWM');
-const valorPWM   = document.getElementById('valorPWM');
+const slidersLed = [1, 2, 3].map(id => document.getElementById(`sliderLED${id}`));
+const slidersMaster = document.getElementById('sliderMaster');
+const sliderBlink = document.getElementById('sliderBlink');
+const btnBlink = document.getElementById('btnBlink');
+const controlButtons = document.querySelectorAll('[data-cmd]');
 
-// ==========================================
-// VERIFICAR SOPORTE DEL NAVEGADOR
-// ==========================================
-// La Web Serial API solo está disponible en Chrome/Edge de escritorio
 if ('serial' in navigator) {
-    // El navegador soporta la API → activamos el botón
     btnConnect.addEventListener('click', connectArduino);
-    console.log("✅ Web Serial API disponible");
 } else {
-    // El navegador NO soporta la API (ej: móvil, Firefox, Safari)
-    statusEl.innerText = "❌ Tu navegador no soporta Web Serial API. Usa Chrome o Edge en PC.";
-    statusEl.style.color = "red";
+    setStatus('Web Serial no está disponible. Abre esta página en Chrome o Edge de escritorio.', 'error');
     btnConnect.disabled = true;
-    btnConnect.innerText = "Navegador no compatible";
 }
 
-// ==========================================
-// FUNCIÓN: CONECTAR CON ARDUINO
-// ==========================================
 async function connectArduino() {
     try {
-        // 1) Abrimos el selector de puertos del navegador
         port = await navigator.serial.requestPort();
-        
-        // 2) Abrimos el puerto a 9600 baudios (DEBE coincidir con Arduino)
         await port.open({ baudRate: 9600 });
-        
-        // 3) Configuramos el escritor para enviar texto a Arduino
-        // TextEncoderStream convierte texto → bytes automáticamente
-        const textEncoder = new TextEncoderStream();
-        const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
-        writer = textEncoder.writable.getWriter();
+        const encoder = new TextEncoderStream();
+        encoder.readable.pipeTo(port.writable);
+        writer = encoder.writable.getWriter();
 
-        // 4) Actualizamos la interfaz: conexión exitosa
-        statusEl.innerText = "🟢 ¡Conectado a Arduino!";
-        statusEl.style.color = "green";
-        btnConnect.innerText = "✅ Conectado";
+        setStatus('Conectado a Arduino', 'connected');
+        btnConnect.textContent = 'Conectado';
         btnConnect.disabled = true;
-
-        // 5) Habilitamos todos los botones de control
-        habilitarBotones(true);
-
-        // 6) Activamos el slider de PWM
-        sliderPWM.disabled = false;
-
-        // 7) Asignamos eventos a todos los botones con atributo data-cmd
-        asignarEventosBotones();
-
-        // 8) Asignamos evento al slider de PWM
-        sliderPWM.addEventListener('input', manejarSlider);
-
-        // 9) Empezamos a leer las respuestas de Arduino
+        [...slidersLed, slidersMaster, sliderBlink].forEach(slider => slider.disabled = false);
+        controlButtons.forEach(button => button.disabled = false);
+        bindControls();
         leerRespuestasArduino();
-
-    } catch (err) {
-        // Si el usuario cancela o hay un error
-        console.error("Error de conexión:", err);
-        statusEl.innerText = "❌ Error al conectar. ¿Seleccionaste el puerto?";
-        statusEl.style.color = "red";
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        setStatus('No se pudo conectar. Comprueba el puerto y vuelve a intentarlo.', 'error');
     }
 }
 
-// ==========================================
-// FUNCIÓN: HABILITAR/DESHABILITAR BOTONES
-// ==========================================
-function habilitarBotones(habilitar) {
-    // Seleccionamos todos los botones que tengan el atributo data-cmd
-    const botones = document.querySelectorAll('[data-cmd]');
-    botones.forEach(btn => {
-        btn.disabled = !habilitar;
-    });
+function setStatus(message, state) {
+    statusEl.textContent = message;
+    statusEl.dataset.state = state;
 }
 
-// ==========================================
-// FUNCIÓN: ASIGNAR EVENTOS A LOS BOTONES
-// ==========================================
-function asignarEventosBotones() {
-    const botones = document.querySelectorAll('[data-cmd]');
-    botones.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const comando = btn.getAttribute('data-cmd');
-            enviarComando(comando);
-            
-            // Si es un comando de encendido, incrementamos el contador
-            if (comando === 'ON1' || comando === 'ON2' || comando === 'ON3' || comando === 'ALLON') {
+function bindControls() {
+    slidersLed.forEach((slider, index) => {
+        const id = index + 1;
+        slider.addEventListener('input', () => {
+            const value = Number(slider.value);
+            document.getElementById(`valorLED${id}`).textContent = value;
+            if (value > 0 && niveles[id] === 0) {
                 contadorEncendidos++;
                 actualizarContador();
             }
+            niveles[id] = value;
+            if (value > 0) ultimoNivel[id] = value;
+            enviarComando(`LED${id}:${value}`);
         });
+    });
+
+    slidersMaster.addEventListener('input', () => {
+        document.getElementById('valorMaster').textContent = slidersMaster.value;
+        enviarComando(`MASTER:${slidersMaster.value}`);
+    });
+
+    sliderBlink.addEventListener('input', () => {
+        document.getElementById('valorBlink').textContent = `${sliderBlink.value} ms`;
+        enviarComando(`SPEED:${sliderBlink.value}`);
+    });
+
+    controlButtons.forEach(button => button.addEventListener('click', async () => {
+        const command = button.dataset.cmd;
+        await enviarComando(command);
+        if (command === 'ALLON') {
+            [1, 2, 3].forEach(id => {
+                if (niveles[id] === 0) contadorEncendidos++;
+                niveles[id] = ultimoNivel[id];
+                slidersLed[id - 1].value = ultimoNivel[id];
+                document.getElementById(`valorLED${id}`).textContent = ultimoNivel[id];
+            });
+            actualizarContador();
+        } else if (command === 'ALLOFF') {
+            [1, 2, 3].forEach(id => {
+                if (niveles[id] > 0) ultimoNivel[id] = niveles[id];
+                niveles[id] = 0;
+                slidersLed[id - 1].value = 0;
+                document.getElementById(`valorLED${id}`).textContent = '0';
+                enviarComando(`LED${id}:0`);
+            });
+        }
+    }));
+
+    btnBlink.addEventListener('click', async () => {
+        blinkActivo = !blinkActivo;
+        await enviarComando(`BLINK:${blinkActivo ? 1 : 0}`);
+        btnBlink.textContent = blinkActivo ? 'Detener parpadeo' : 'Activar parpadeo';
+        btnBlink.classList.toggle('is-active', blinkActivo);
     });
 }
 
-// ==========================================
-// FUNCIÓN: ENVIAR COMANDO A ARDUINO
-// ==========================================
-async function enviarComando(cmd) {
-    if (writer) {
-        // Añadimos \n al final para que Arduino lo detecte con readStringUntil('\n')
-        await writer.write(cmd + '\n');
-        console.log("📤 Enviado:", cmd);
+async function enviarComando(command) {
+    if (!writer) return;
+    try {
+        await writer.write(`${command}\n`);
+    } catch (error) {
+        console.error('No se pudo enviar el comando:', error);
+        setStatus('Se perdió la comunicación con Arduino.', 'error');
     }
 }
 
-// ==========================================
-// FUNCIÓN: MANEJAR EL SLIDER DE PWM
-// ==========================================
-function manejarSlider(e) {
-    const valor = e.target.value;
-    // Mostramos el valor actual al lado del slider
-    valorPWM.innerText = valor;
-    // Enviamos el comando PWM al Arduino
-    enviarComando('PWM:' + valor);
-}
-
-// ==========================================
-// FUNCIÓN: ACTUALIZAR CONTADOR EN PANTALLA
-// ==========================================
 function actualizarContador() {
-    contadorEl.innerText = contadorEncendidos;
+    contadorEl.textContent = contadorEncendidos;
 }
 
-// ==========================================
-// FUNCIÓN: LEER RESPUESTAS DE ARDUINO
-// ==========================================
 async function leerRespuestasArduino() {
-    // TextDecoderStream convierte bytes → texto
-    const textDecoder = new TextDecoderStream();
-    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-    const reader = textDecoder.readable.getReader();
-
+    const decoder = new TextDecoderStream();
+    port.readable.pipeTo(decoder.writable);
+    const reader = decoder.readable.getReader();
     try {
-        // Bucle infinito que lee mientras la conexión esté activa
         while (true) {
             const { value, done } = await reader.read();
-            if (done) {
-                // El puerto se cerró
-                break;
-            }
-            if (value) {
-                // Mostramos en consola lo que Arduino nos envía
-                console.log("📥 Arduino dice:", value.trim());
-            }
+            if (done) break;
+            if (value) console.log('Arduino:', value.trim());
         }
-    } catch (err) {
-        console.error("Error leyendo datos:", err);
+    } catch (error) {
+        console.error('Error leyendo datos:', error);
     } finally {
-        // Liberamos el lector al finalizar
         reader.releaseLock();
     }
 }

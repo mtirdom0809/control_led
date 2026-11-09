@@ -1,118 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Codificación de caracteres para que se vean bien los acentos y la ñ -->
     <meta charset="UTF-8">
-    
-    <!-- Hace la página responsive en móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Título que aparece en la pestaña del navegador -->
-    <title>Control LEDs Arduino</title>
-    
-    <!-- Enlace a la hoja de estilos externa -->
+    <meta name="theme-color" content="#f4effa">
+    <title>Control de luces | Arduino</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-    <!-- Contenedor principal de la aplicación -->
-    <div class="container">
-        
-        <!-- Cabecera con el título -->
-        <header>
-            <h1>🔌 Control de LEDs</h1>
-            <p class="subtitle">Comunicación Web ↔ Arduino por USB</p>
+    <main class="container">
+        <header class="hero">
+            <p class="eyebrow">UN RINCÓN DE LUZ</p>
+            <h1>Control de luces</h1>
+            <p class="subtitle">Ajusta el brillo y crea una atmósfera tranquila.</p>
         </header>
 
-        <!-- ============================================ -->
-        <!-- SECCIÓN DE CONEXIÓN CON ARDUINO              -->
-        <!-- ============================================ -->
-        <section class="conexion">
-            <!-- Botón que dispara la Web Serial API -->
-            <button id="btnConnect" class="btn btn-connect">
-                🔗 Conectar Arduino
-            </button>
-            <!-- Mensaje que muestra el estado de la conexión -->
-            <p id="status" class="status-msg">⚪ Desconectado</p>
+        <section class="connection-card" aria-label="Conexión con Arduino">
+            <div>
+                <h2>Tu placa</h2>
+                <p id="status" class="status-msg" aria-live="polite">Desconectado</p>
+            </div>
+            <button id="btnConnect" class="btn btn-connect">Conectar Arduino</button>
         </section>
 
-        <!-- ============================================ -->
-        <!-- SECCIÓN DE CONTROL INDIVIDUAL DE CADA LED    -->
-        <!-- ============================================ -->
-        <section class="controles">
-            <h2>Control individual</h2>
-            
-            <!-- Controles del LED 1 (Rojo) -->
-            <div class="led-control led1">
-                <h3>🔴 LED 1 (Pin 8)</h3>
-                <button class="btn btn-on" data-cmd="ON1" disabled>ENCENDER</button>
-                <button class="btn btn-off" data-cmd="OFF1" disabled>APAGAR</button>
+        <section class="controls-section">
+            <div class="section-heading">
+                <p class="eyebrow">ILUMINACIÓN</p>
+                <h2>Luces individuales</h2>
             </div>
-
-            <!-- Controles del LED 2 (Azul) - También tiene PWM -->
-            <div class="led-control led2">
-                <h3>🔵 LED 2 (Pin 9 - PWM)</h3>
-                <button class="btn btn-on" data-cmd="ON2" disabled>ENCENDER</button>
-                <button class="btn btn-off" data-cmd="OFF2" disabled>APAGAR</button>
-                
-                <!-- Slider para regular luminosidad (Actividad 7) -->
-                <div class="slider-container">
-                    <label for="sliderPWM">Luminosidad:</label>
-                    <input type="range" id="sliderPWM" min="0" max="255" value="128" disabled>
-                    <span id="valorPWM">128</span>
-                </div>
-            </div>
-
-            <!-- Controles del LED 3 (Verde) -->
-            <div class="led-control led3">
-                <h3>🟢 LED 3 (Pin 10)</h3>
-                <button class="btn btn-on" data-cmd="ON3" disabled>ENCENDER</button>
-                <button class="btn btn-off" data-cmd="OFF3" disabled>APAGAR</button>
+            <div class="led-grid">
+                <article class="led-card led1">
+                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz uno</h3></div>
+                    <label for="sliderLED1">Brillo <output id="valorLED1">128</output></label>
+                    <input class="range-input" type="range" id="sliderLED1" min="0" max="255" value="128" disabled>
+                </article>
+                <article class="led-card led2">
+                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz dos</h3></div>
+                    <label for="sliderLED2">Brillo <output id="valorLED2">128</output></label>
+                    <input class="range-input" type="range" id="sliderLED2" min="0" max="255" value="128" disabled>
+                </article>
+                <article class="led-card led3">
+                    <div class="card-heading"><span class="color-dot" aria-hidden="true"></span><h3>Luz tres</h3></div>
+                    <label for="sliderLED3">Brillo <output id="valorLED3">128</output></label>
+                    <input class="range-input" type="range" id="sliderLED3" min="0" max="255" value="128" disabled>
+                </article>
             </div>
         </section>
 
-        <!-- ============================================ -->
-        <!-- SECCIÓN DE CONTROLES ESPECIALES              -->
-        <!-- ============================================ -->
-        <section class="controles-especiales">
-            <h2>Controles especiales</h2>
-            
-            <!-- Botón para encender TODOS los LEDs a la vez (Actividad 4) -->
-            <button class="btn btn-all-on" data-cmd="ALLON" disabled>
-                💡 ENCENDER TODOS
-            </button>
-            <button class="btn btn-all-off" data-cmd="ALLOFF" disabled>
-                🌑 APAGAR TODOS
-            </button>
-            
-            <!-- Botón de parpadeo (Actividad 5) -->
-            <button class="btn btn-blink" data-cmd="BLINK" disabled>
-                ✨ PARPADEO LED 1
-            </button>
+        <section class="master-card">
+            <div class="section-heading">
+                <p class="eyebrow">AMBIENTE</p>
+                <h2>Brillo general</h2>
+                <p class="helper-text">Ajusta todas las luces a la vez sin cambiar sus niveles individuales.</p>
+            </div>
+            <label for="sliderMaster">Intensidad general <output id="valorMaster">255</output></label>
+            <input class="range-input" type="range" id="sliderMaster" min="0" max="255" value="255" disabled>
+            <div class="button-row">
+                <button class="btn btn-soft" data-cmd="ALLON" disabled>Encender todas</button>
+                <button class="btn btn-outline" data-cmd="ALLOFF" disabled>Apagar todas</button>
+            </div>
         </section>
 
-        <!-- ============================================ -->
-        <!-- CONTADOR DE ENCENDIDOS (Actividad 6)         -->
-        <!-- ============================================ -->
-        <section class="contador">
-            <h2>📊 Estadísticas</h2>
-            <p>Total de encendidos: <span id="contador" class="contador-num">0</span></p>
+        <section class="blink-card">
+            <div class="section-heading">
+                <p class="eyebrow">RITMO SUAVE</p>
+                <h2>Parpadeo de las luces</h2>
+                <p class="helper-text">Haz que las tres luces parpadeen juntas y elige su ritmo.</p>
+            </div>
+            <label for="sliderBlink">Intervalo <output id="valorBlink">500 ms</output></label>
+            <input class="range-input" type="range" id="sliderBlink" min="100" max="1500" step="50" value="500" disabled>
+            <button id="btnBlink" class="btn btn-blink" disabled>Activar parpadeo</button>
         </section>
 
-        <!-- ============================================ -->
-        <!-- PIE DE PÁGINA (Actividad 8)                  -->
-        <!-- ============================================ -->
+        <section class="counter-card" aria-live="polite">
+            <p class="eyebrow">RESUMEN</p>
+            <p>Encendidos registrados <strong id="contador">0</strong></p>
+        </section>
+
         <footer>
             <p>Realizado por: <strong>Mirian Tirado y Daiana Ruiz</strong></p>
-            <p>Fecha: Noviembre 2026</p>
-            <!-- GIF animado real de LED parpadeando -->
-            <img src="https://media.giphy.com/media/EICh6TFvKqVtm/giphy.gif"
-                 alt="GIF animado de LED parpadeando"
-                 width="220"
-                 loading="lazy">
+            <p>Noviembre 2026</p>
+            <img class="gif-footer" src="https://media.giphy.com/media/EICh6TFvKqVtm/giphy.gif" alt="Animación de una luz parpadeando" loading="lazy">
         </footer>
-    </div>
-
-    <!-- Enlace al script JavaScript externo -->
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

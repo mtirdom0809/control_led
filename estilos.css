@@ -1,258 +1,102 @@
-/* ============================================ */
-/* RESET Y ESTILOS BASE                         */
-/* ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
-/* Eliminamos márgenes por defecto y configuramos la fuente */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    color-scheme: light;
+    --ink: #413650;
+    --muted: #81768e;
+    --lavender: #8d75b2;
+    --lavender-dark: #725b96;
+    --lavender-light: #eee7f6;
+    --line: #e9e1ef;
+    --surface: #fffdfd;
+    --shadow: 0 18px 50px rgba(82, 61, 105, .12);
 }
 
-/* Fondo general de la página con degradado suave */
+* { box-sizing: border-box; }
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
     min-height: 100vh;
-    padding: 20px;
+    padding: 38px 18px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    background: radial-gradient(ellipse at 12% 8%, #fff8f1 0, transparent 34%),
+                linear-gradient(145deg, #f8f3fb 0%, #eee8f5 55%, #f7eff5 100%);
+    color: var(--ink);
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
 }
 
-/* ============================================ */
-/* CONTENEDOR PRINCIPAL                         */
-/* ============================================ */
-
-/* Caja blanca centrada que contiene toda la app */
+button, input { font: inherit; }
 .container {
-    background: white;
-    padding: 30px;
+    width: min(100%, 760px);
+    padding: clamp(22px, 5vw, 46px);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 30px;
+    background: rgba(255,253,253,.94);
+    box-shadow: var(--shadow);
+}
+.hero { text-align: center; padding: 8px 0 28px; }
+.eyebrow { margin: 0 0 8px; color: var(--lavender); font-size: .72rem; font-weight: 700; letter-spacing: .16em; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 8px; font: 700 clamp(2.1rem, 7vw, 3.2rem)/1.1 'Playfair Display', Georgia, serif; letter-spacing: -.035em; }
+.subtitle, .helper-text { color: var(--muted); line-height: 1.6; }
+.subtitle { margin-bottom: 0; }
+section { margin-top: 20px; }
+.connection-card, .master-card, .blink-card, .counter-card {
+    padding: 22px 24px;
+    border: 1px solid var(--line);
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 100%;
+    background: #fff;
 }
+.connection-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; background: #f8f4fb; }
+.connection-card h2, .section-heading h2 { margin-bottom: 5px; font: 600 1.35rem 'Playfair Display', Georgia, serif; }
+.status-msg { margin: 0; color: var(--muted); font-size: .9rem; }
+.status-msg[data-state="connected"] { color: #567b67; }
+.status-msg[data-state="error"] { color: #a64e68; }
+.controls-section { margin-top: 32px; }
+.section-heading { margin-bottom: 16px; }
+.section-heading .eyebrow { margin-bottom: 5px; }
+.section-heading h2 { margin-bottom: 5px; }
+.helper-text { margin-bottom: 0; font-size: .9rem; }
+.led-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.led-card { padding: 19px 17px; border: 1px solid var(--line); border-radius: 18px; background: #fdfbfe; }
+.card-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.card-heading h3 { margin: 0; font-size: 1rem; font-weight: 600; }
+.color-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 5px rgba(141,117,178,.1); }
+.led1 .color-dot { background: #b77991; }
+.led2 .color-dot { background: #8a79ba; }
+.led3 .color-dot { background: #8b9b80; }
+label { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #655a72; font-size: .88rem; font-weight: 600; }
+output { min-width: 46px; padding: 4px 8px; border-radius: 999px; background: var(--lavender-light); color: var(--lavender-dark); text-align: center; font-size: .78rem; font-weight: 700; }
+.range-input { width: 100%; margin: 14px 0 0; accent-color: var(--lavender); cursor: pointer; }
+.range-input:disabled { cursor: not-allowed; opacity: .48; }
+.button-row { display: flex; gap: 10px; margin-top: 20px; }
+.btn { min-height: 44px; padding: 10px 17px; border: 0; border-radius: 12px; cursor: pointer; font-weight: 700; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 7px 16px rgba(95,73,120,.16); }
+.btn:focus-visible, .range-input:focus-visible { outline: 3px solid #c7b5df; outline-offset: 3px; }
+.btn:disabled { cursor: not-allowed; opacity: .48; }
+.btn-connect, .btn-soft, .btn-blink { color: #fff; background: var(--lavender); }
+.btn-connect:hover:not(:disabled), .btn-soft:hover:not(:disabled), .btn-blink:hover:not(:disabled) { background: var(--lavender-dark); }
+.btn-outline { color: var(--lavender-dark); border: 1px solid #d8cbe7; background: #fff; }
+.btn-blink { width: 100%; margin-top: 20px; }
+.btn-blink.is-active { background: #6d8b78; }
+.counter-card { display: flex; align-items: center; justify-content: space-between; gap: 15px; background: #f8f4fb; }
+.counter-card .eyebrow { margin: 0; }
+.counter-card p:last-child { margin: 0; color: var(--muted); }
+.counter-card strong { display: inline-grid; place-items: center; min-width: 36px; min-height: 36px; margin-left: 8px; border-radius: 50%; background: #e9e0f2; color: var(--lavender-dark); }
+footer { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: .86rem; }
+footer p { margin: 5px 0; }
+.gif-footer { display: block; width: 120px; max-width: 100%; margin: 16px auto 0; border: 3px solid #e8def1; border-radius: 14px; }
 
-/* ============================================ */
-/* CABECERA                                     */
-/* ============================================ */
-
-/* Título principal centrado */
-header {
-    text-align: center;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 15px;
+@media (max-width: 620px) {
+    body { padding: 16px 10px; }
+    .container { border-radius: 23px; }
+    .led-grid { grid-template-columns: 1fr; }
+    .connection-card { align-items: stretch; flex-direction: column; }
+    .btn-connect { width: 100%; }
 }
-
-header h1 {
-    color: #333;
-    font-size: 2rem;
-}
-
-/* Subtítulo en gris más claro */
-.subtitle {
-    color: #777;
-    font-size: 0.95rem;
-    margin-top: 5px;
-}
-
-/* ============================================ */
-/* SECCIÓN DE CONEXIÓN                          */
-/* ============================================ */
-
-.conexion {
-    text-align: center;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-/* ============================================ */
-/* BOTONES BASE                                 */
-/* ============================================ */
-
-/* Estilo común para todos los botones */
-.btn {
-    padding: 12px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    color: white;
-    transition: all 0.2s ease; /* Animación suave al pasar el ratón */
-}
-
-/* Efecto al pasar el ratón por encima */
-.btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Efecto al hacer click */
-.btn:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-/* Estado deshabilitado (cuando no hay conexión) */
-.btn:disabled {
-    background-color: #ccc !important;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-/* ============================================ */
-/* COLORES ESPECÍFICOS DE BOTONES               */
-/* ============================================ */
-
-.btn-connect { background-color: #007bff; }
-.btn-on      { background-color: #28a745; }
-.btn-off     { background-color: #dc3545; }
-.btn-all-on  { background-color: #ffc107; color: #333; }
-.btn-all-off { background-color: #6c757d; }
-.btn-blink   { background-color: #17a2b8; }
-
-/* ============================================ */
-/* MENSAJE DE ESTADO                            */
-/* ============================================ */
-
-.status-msg {
-    margin-top: 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #666;
-}
-
-/* ============================================ */
-/* SECCIONES DE CONTROLES                       */
-/* ============================================ */
-
-section {
-    margin-bottom: 25px;
-}
-
-section h2 {
-    color: #444;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    border-left: 4px solid #667eea;
-    padding-left: 10px;
-}
-
-/* Cada bloque de control de LED */
-.led-control {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    border-left: 5px solid #667eea;
-}
-
-.led-control h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
-
-/* Bordes de colores según el LED */
-.led1 { border-left-color: #dc3545; }
-.led2 { border-left-color: #007bff; }
-.led3 { border-left-color: #28a745; }
-
-/* ============================================ */
-/* SLIDER DE PWM                                */
-/* ============================================ */
-
-.slider-container {
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.slider-container label {
-    font-weight: bold;
-    color: #555;
-}
-
-/* Estilo del slider (rango) */
-#sliderPWM {
-    flex: 1;
-    min-width: 150px;
-    accent-color: #007bff; /* Color del thumb en navegadores modernos */
-}
-
-/* Número que muestra el valor actual del slider */
-#valorPWM {
-    background: #007bff;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    min-width: 45px;
-    text-align: center;
-}
-
-/* ============================================ */
-/* CONTROLES ESPECIALES                         */
-/* ============================================ */
-
-.controles-especiales {
-    text-align: center;
-}
-
-/* ============================================ */
-/* CONTADOR                                     */
-/* ============================================ */
-
-.contador {
-    text-align: center;
-    background: #fff3cd;
-    padding: 15px;
-    border-radius: 10px;
-    border: 2px dashed #ffc107;
-}
-
-.contador-num {
-    font-size: 1.5rem;
-    color: #d39e00;
-    font-weight: bold;
-}
-
-/* ============================================ */
-/* PIE DE PÁGINA                                */
-/* ============================================ */
-
-footer {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-    text-align: center;
-    color: #777;
-    font-size: 0.9rem;
-}
-
-footer p {
-    margin: 5px 0;
-}
-
-/* GIF del pie de página */
-.gif-footer {
-    margin-top: 10px;
-    width: 120px;
-    border-radius: 10px;
-    border: 3px solid #667eea;
-}
-
-/* ============================================ */
-/* RESPONSIVE: ADAPTACIÓN A MÓVILES             */
-/* ============================================ */
-
-@media (max-width: 500px) {
-    header h1 { font-size: 1.5rem; }
-    .btn { width: 100%; margin: 5px 0; }
+@media (max-width: 420px) {
+    .button-row { flex-direction: column; }
+    .button-row .btn { width: 100%; }
+    .connection-card, .master-card, .blink-card, .counter-card { padding: 19px; }
 }
