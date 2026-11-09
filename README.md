@@ -6,12 +6,12 @@ Proyecto educativo que permite controlar LEDs físicos conectados a una placa **
 Comunicación bidireccional entre un navegador web (Chrome/Edge) y Arduino mediante cable USB.
 
 ##  Funcionalidades
-- ✅ Control individual de 3 LEDs (pines 8, 9 y 10)
-- ✅ Botón para encender/apagar todos los LEDs a la vez
-- ✅ Modo parpadeo no bloqueante con `millis()`
-- ✅ Control de luminosidad mediante PWM (slider)
-- ✅ Contador de encendidos en tiempo real
-- ✅ Confirmación de comandos desde Arduino
+-  Control individual de 3 LEDs (pines 8, 9 y 10)
+-  Botón para encender/apagar todos los LEDs a la vez
+-  Modo parpadeo no bloqueante con `millis()`
+-  Control de luminosidad mediante PWM (slider)
+-  Contador de encendidos en tiempo real
+-  Confirmación de comandos desde Arduino
 
 ##  Material
 - Arduino UNO R3 (ELEGOO)
@@ -23,9 +23,9 @@ Comunicación bidireccional entre un navegador web (Chrome/Edge) y Arduino media
 ##  Conexiones
 | LED | Color | Pin |
 |-----|-------|-----|
-| LED 1 | 🔴 Rojo | 8 |
-| LED 2 | 🔵 Azul | 9 (PWM) |
-| LED 3 | 🟢 Verde | 10 |
+| LED 1 |  Rojo | 8 |
+| LED 2 |  Azul | 9 (PWM) |
+| LED 3 |  Verde | 10 |
 
 ##  Cómo usarlo
 1. Cargar `control_led.ino` en Arduino IDE
