@@ -2,7 +2,6 @@ let port;
 let writer;
 let contadorEncendidos = 0;
 let blinkActivo = false;
-let controlesConectados = false;
 const niveles = { 1: 128, 2: 128, 3: 128 };
 const ultimosNiveles = { 1: 128, 2: 128, 3: 128 };
 
@@ -34,10 +33,7 @@ async function connectArduino() {
         btnConnect.disabled = true;
         document.querySelectorAll('[data-cmd]').forEach(button => button.disabled = false);
         [...sliders, sliderMaster, sliderBlink, btnBlink].forEach(control => control.disabled = false);
-        if (!controlesConectados) {
-            bindControls();
-            controlesConectados = true;
-        }
+        bindControls();
         leerRespuestasArduino();
     } catch (error) {
         console.error('Error de conexión:', error);
@@ -89,6 +85,15 @@ function bindControls() {
     document.querySelectorAll('[data-cmd]').forEach(button => {
         button.addEventListener('click', async () => {
             const command = button.dataset.cmd;
+
+            if (command === 'BLINK') {
+                blinkActivo = !blinkActivo;
+                await enviarComando('BLINK');
+                btnBlink.textContent = blinkActivo ? 'DETENER PARPADEO' : 'ACTIVAR PARPADEO';
+                btnBlink.classList.toggle('is-active', blinkActivo);
+                return;
+            }
+
             if (/^ON[123]$/.test(command)) {
                 const id = Number(command.slice(-1));
                 await setLevel(id, ultimosNiveles[id] || 128);
@@ -100,13 +105,6 @@ function bindControls() {
                 for (const id of [1, 2, 3]) await setLevel(id, 0);
             }
         });
-    });
-
-    btnBlink.addEventListener('click', async () => {
-        blinkActivo = !blinkActivo;
-        await enviarComando(`BLINK:${blinkActivo ? 1 : 0}`);
-        btnBlink.textContent = blinkActivo ? 'DETENER PARPADEO' : 'ACTIVAR PARPADEO';
-        btnBlink.classList.toggle('is-active', blinkActivo);
     });
 }
 

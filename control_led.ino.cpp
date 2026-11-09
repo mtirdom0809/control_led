@@ -2,7 +2,7 @@
  * LEDs: rojo en pin 8, azul en pin 9 y verde en pin 10.
  * El pin 8 es digital; los pines 9 y 10 permiten PWM.
  * Comandos: LED1:valor, LED2:valor, LED3:valor, MASTER:valor,
- * BLINK:0/1 (también se acepta BLINK para alternar), SPEED:milisegundos.
+ * BLINK, SPEED:milisegundos.
  */
 const int LED_ROJO = 8;
 const int LED_AZUL = 9;
@@ -21,7 +21,7 @@ void aplicarBrillo() {
     int salida = (parpadeoActivo && !estadoParpadeo) ? 0 : nivelesLED[i];
     salida = (salida * brilloGeneral) / 255;
 
-    // El pin 8 no admite PWM: se conmuta digitalmente; 9 y 10 usan PWM.
+    // El pin 8 no admite PWM: se usa como ON/OFF; 9 y 10 usan PWM.
     if (i == 0) {
       digitalWrite(pinesLED[i], salida > 0 ? HIGH : LOW);
     } else {
@@ -34,7 +34,25 @@ void procesarComando(String recibido) {
   recibido.trim();
   if (recibido.length() == 0) return;
 
-  if (recibido.startsWith("LED1:")) {
+  if (recibido == "BLINK") {
+    parpadeoActivo = !parpadeoActivo;
+    estadoParpadeo = true;
+    tiempoAnterior = millis();
+    if (!parpadeoActivo) {
+      for (int i = 0; i < 3; i++) {
+        digitalWrite(pinesLED[i], LOW);
+      }
+    }
+  } else if (recibido.startsWith("BLINK:")) {
+    parpadeoActivo = recibido.substring(6).toInt() == 1;
+    estadoParpadeo = true;
+    tiempoAnterior = millis();
+    if (!parpadeoActivo) {
+      for (int i = 0; i < 3; i++) {
+        digitalWrite(pinesLED[i], LOW);
+      }
+    }
+  } else if (recibido.startsWith("LED1:")) {
     nivelesLED[0] = constrain(recibido.substring(5).toInt(), 0, 255);
   } else if (recibido.startsWith("LED2:")) {
     nivelesLED[1] = constrain(recibido.substring(5).toInt(), 0, 255);
@@ -48,14 +66,6 @@ void procesarComando(String recibido) {
     }
   } else if (recibido == "ALLOFF") {
     for (int i = 0; i < 3; i++) nivelesLED[i] = 0;
-  } else if (recibido == "BLINK") {
-    parpadeoActivo = !parpadeoActivo;
-    estadoParpadeo = true;
-    tiempoAnterior = millis();
-  } else if (recibido.startsWith("BLINK:")) {
-    parpadeoActivo = recibido.substring(6).toInt() == 1;
-    estadoParpadeo = true;
-    tiempoAnterior = millis();
   } else if (recibido.startsWith("SPEED:")) {
     intervaloParpadeo = constrain(recibido.substring(6).toInt(), 100, 1500);
   } else if (recibido == "ON1" || recibido == "ON2" || recibido == "ON3") {
@@ -75,7 +85,6 @@ void setup() {
     digitalWrite(pinesLED[i], LOW);
   }
   Serial.begin(9600);
-  // Reducir el bloqueo si una transmisión se interrumpe antes del salto de línea.
   Serial.setTimeout(25);
   Serial.println("ARDUINO_LISTO");
 }
